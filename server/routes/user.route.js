@@ -7,23 +7,26 @@ import {
   updateProfile,
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../Middleware/isAuthenticated.js";
-import upload from "../utils/Multer.js"; // Assuming 'upload' is your file handling middleware
+import upload from "../utils/Multer.js"; // Ensure multer setup is correct
 
 const router = express.Router();
 
-// User registration and login routes
-router.route("/register").post(register);
-router.route("/login").post(login);
+// User registration & login
+router.post("/register", register);
+router.post("/login", login);
 
-// Logout route
-router.route("/logout").get(logout);
+// Logout
+router.get("/logout", logout);
 
-// Profile routes
-router.route("/profile").get(isAuthenticated, getUserProfile);
+// Get user profile (protected)
+router.get("/profile", isAuthenticated, getUserProfile);
 
-// Update profile route with file upload
-router
-  .route("/profile/update")
-  .put(isAuthenticated, upload.single("profilePhoto"), updateProfile); // Assuming 'profilePhoto' is the field name for the file
+// Update profile with file upload (protected)
+router.put(
+  "/profile/update",
+  isAuthenticated,
+  upload.single("profilePhoto"),
+  updateProfile
+);
 
 export default router;

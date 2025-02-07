@@ -15,9 +15,9 @@ cloudinary.config({
 export const uploadMedia = async (file) => {
   try {
     const uploadResponse = await cloudinary.uploader.upload(file, {
-      resource_type: "auto",
+      resource_type: "auto", // Automatically detect the type of file (image, video, etc.)
     });
-    return uploadResponse;
+    return uploadResponse; // This will return the upload response which includes the URL and metadata
   } catch (error) {
     console.error("Error uploading media:", error.message);
     throw new Error("Failed to upload media to Cloudinary");

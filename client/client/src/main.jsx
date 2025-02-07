@@ -11,7 +11,7 @@ import LoadingSpinner from "./components/ui/LoadingSpinner";
 // Custom Wrapper Component
 const Custom = ({ children }) => {
   const { isLoading } = useLoadUserQuery();
-  return <>{isLoading ? <LoadingSpinner/> : children}</>;
+  return <>{isLoading ? <LoadingSpinner /> : children}</>;
 };
 
 // Render App

@@ -7,25 +7,38 @@ export const CourseApi = createApi({
   tagTypes: ["Refetch_Creator_Course"],
   baseQuery: fetchBaseQuery({
     baseUrl: COURSE_API,
-    credentials: "include",
+    credentials: "include", // for cookies to be sent with requests
   }),
   endpoints: (builder) => ({
     createCourse: builder.mutation({
       query: ({ courseTitle, category }) => ({
-        url: "",
+        url: "", // This can be left empty if it's a POST to the base URL
         method: "POST",
         body: { courseTitle, category },
       }),
-    invalidatesTags: ["Refetch_Creator_Course"],
+      invalidatesTags: ["Refetch_Creator_Course"], // Invalidate tag to refetch courses
     }),
+
     getCreatorCourses: builder.query({
       query: () => ({
-        url: "",
+        url: "", // This can be left empty if it's a GET request to the base URL
         method: "GET",
       }),
-      providesTags: ["Refetch_Creator_Course"],
+      providesTags: ["Refetch_Creator_Course"], // Ensure the data is cached under this tag
+    }),
+
+    editCourse: builder.mutation({
+      query: ({ formData, courseId }) => ({
+        url: `/${courseId}`, // Include courseId to update a specific course
+        method: "PUT",
+        body: formData,
+      }),
     }),
   }),
 });
 
-export const { useCreateCourseMutation, useGetCreatorCoursesQuery } = CourseApi;
+export const {
+  useCreateCourseMutation,
+  useGetCreatorCoursesQuery,
+  useEditCourseMutation,
+} = CourseApi;

@@ -7,7 +7,7 @@ import MyLearning from "./pages/students/MyLearning";
 import Profile from "./pages/students/Profile";
 import Sidebar from "./pages/admin/lecture/Sidebar";
 import Dashboard from "./pages/admin/lecture/Dashboard";
-import CorsesTable  from "./pages/admin/course/CorsesTable";
+import CorsesTable from "./pages/admin/course/CorsesTable";
 import AddCourse from "./pages/admin/course/AddCourse";
 import { EditCourse } from "./pages/admin/course/EditCourse";
 
@@ -55,6 +55,7 @@ const appRouter = createBrowserRouter([
             path: "course/create",
             element: <AddCourse />,
           },
+
           {
             path: "course/:courseId",
             element: <EditCourse />,

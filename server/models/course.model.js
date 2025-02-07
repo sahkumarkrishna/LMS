@@ -4,7 +4,6 @@ const courseSchema = new mongoose.Schema(
   {
     courseTitle: {
       type: String,
-      required: true,
     },
     subTitle: {
       type: String,
