@@ -7,31 +7,68 @@ export const CourseApi = createApi({
   tagTypes: ["Refetch_Creator_Course"],
   baseQuery: fetchBaseQuery({
     baseUrl: COURSE_API,
-    credentials: "include", // for cookies to be sent with requests
+    credentials: "include", // For cookies to be sent with requests
   }),
   endpoints: (builder) => ({
     createCourse: builder.mutation({
       query: ({ courseTitle, category }) => ({
-        url: "", // This can be left empty if it's a POST to the base URL
+        url: "",
         method: "POST",
         body: { courseTitle, category },
       }),
-      invalidatesTags: ["Refetch_Creator_Course"], // Invalidate tag to refetch courses
+      invalidatesTags: ["Refetch_Creator_Course"],
     }),
 
     getCreatorCourses: builder.query({
       query: () => ({
-        url: "", // This can be left empty if it's a GET request to the base URL
+        url: "",
         method: "GET",
       }),
-      providesTags: ["Refetch_Creator_Course"], // Ensure the data is cached under this tag
+      providesTags: ["Refetch_Creator_Course"],
     }),
 
     editCourse: builder.mutation({
       query: ({ formData, courseId }) => ({
-        url: `/${courseId}`, // Include courseId to update a specific course
+        url: `/${courseId}`,
         method: "PUT",
         body: formData,
+      }),
+      invalidatesTags: ["Refetch_Creator_Course"],
+    }),
+
+    getCourseById: builder.query({
+      query: (courseId) => ({
+        url: `/${courseId}`,
+        method: "GET",
+      }),
+    }),
+
+    createLecture: builder.mutation({
+      query: ({ courseId, lectureTitle }) => ({
+        url: `/${courseId}/lecture`,
+        method: "POST",
+        body: { lectureTitle },
+      }),
+    }),
+
+    getCourseLecture: builder.query({
+      query: (courseId) => ({
+        url: `/${courseId}/lecture`,
+        method: "GET",
+      }),
+    }),
+
+    editLecture: builder.mutation({
+      query: ({
+        lectureTitle,
+        videoInfo,
+        isPreviewFree,
+        courseId,
+        lectureId,
+      }) => ({
+        url: `/${courseId}/lecture/${lectureId}`,
+        method: "PUT", // Change to PUT or PATCH for updating
+        body: { lectureTitle, videoInfo, isPreviewFree },
       }),
     }),
   }),
@@ -41,4 +78,8 @@ export const {
   useCreateCourseMutation,
   useGetCreatorCoursesQuery,
   useEditCourseMutation,
+  useGetCourseByIdQuery,
+  useCreateLectureMutation,
+  useGetCourseLectureQuery,
+  useEditLectureMutation, // Added missing export
 } = CourseApi;
