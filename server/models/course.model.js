@@ -4,13 +4,10 @@ const courseSchema = new mongoose.Schema(
   {
     courseTitle: {
       type: String,
+      required: true,
     },
-    subTitle: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
+    subTitle: { type: String },
+    description: { type: String },
     category: {
       type: String,
       required: true,

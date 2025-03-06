@@ -30,19 +30,24 @@ const CreateLecture = () => {
     isError: lectureError,
     refetch,
   } = useGetCourseByIdQuery(courseId);
-
+  console.log(lectureData);
   const createLectureHandler = async () => {
-    const payload = {
-      lectureTitle: LectureTitle,
-      courseId,
-    };
+    try {
+      const payload = {
+        lectureTitle: LectureTitle,
+        courseId,
+      };
 
-    await createLecture(payload);
+      await createLecture(payload).unwrap();
+    } catch (err) {
+      console.error("Failed to create lecture: ", err);
+      toast.error(err?.data?.message || "Failed to create lecture");
+    }
   };
 
   useEffect(() => {
     if (isSuccess) {
-      refetch()
+      refetch();
       toast.success(data?.message || "Lecture created successfully");
     }
     if (error) {
@@ -114,7 +119,6 @@ const CreateLecture = () => {
                   courseId={courseId}
                   index={index}
                   lecture={lecture}
-                  
                 />
               );
             })

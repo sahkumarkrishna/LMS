@@ -48,9 +48,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center gap-10 h-full">
         <div className="flex items-center gap-2">
           <School size={"30"} />
-          <h1 className="hidden md:block font-extrabold text-2xl text-black">
-            E-learning
-          </h1>
+          <Link to="/">
+            <h1 className="hidden md:block font-extrabold text-2xl text-black">
+              E-learning
+            </h1>
+          </Link>
         </div>
         {/* User icon and dark mode icon */}
         <div className="flex items-center gap-5">
@@ -114,8 +116,8 @@ const MobileNavbar = () => {
   const [logoutUser] = useLogoutUserMutation();
 
   return (
-    <Sheet >
-      <SheetTrigger asChild >
+    <Sheet>
+      <SheetTrigger asChild>
         <Button
           size="icon"
           className="rounded-full bg-gray-200 hover:bg-gray-300 "
@@ -123,7 +125,7 @@ const MobileNavbar = () => {
         >
           <Menu />
         </Button>
-      </SheetTrigger >
+      </SheetTrigger>
       <SheetContent className="flex flex-col space-y-4 bg-white">
         <SheetHeader className="flex flex-row items-center justify-between mt-2">
           <SheetTitle>E-Learning</SheetTitle>

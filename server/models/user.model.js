@@ -9,8 +9,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true, // Ensures no duplicate emails
-     
     },
     password: {
       type: String,
@@ -24,17 +22,15 @@ const userSchema = new mongoose.Schema(
     enrolledCourses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course", // Refers to the "Course" collection
+        ref: "Course",
       },
     ],
     photoUrl: {
       type: String,
-      default: " ", // Default photo URL
+      default: "",
     },
   },
-  {
-    timestamps: true, // Adds createdAt and updatedAt fields
-  }
+  { timestamps: true }
 );
 
 export const User = mongoose.model("User", userSchema);

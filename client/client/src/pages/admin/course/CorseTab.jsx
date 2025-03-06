@@ -21,6 +21,7 @@ import {
 import {
   useEditCourseMutation,
   useGetCourseByIdQuery,
+  usePublishCourseMutation,
 } from "@/Features/api/courseApi";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -35,13 +36,25 @@ const CourseTab = () => {
     category: "",
     courseLevel: "",
     coursePrice: "",
-    courseThumbnail: "",
+    courseThumbnail: null,
   });
+
   const params = useParams();
   const courseId = params.courseId;
-  const { data: courseByIdData, isLoading: courseByIdLoading } =
-    useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
+  const navigate = useNavigate();
+
+  const {
+    data: courseByIdData,
+    isLoading: courseByIdLoading,
+    refetch,
+  } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
+
+  const [editCourse, { data, isLoading, isSuccess, error }] =
+    useEditCourseMutation();
+  const [publishCourse] = usePublishCourseMutation();
+
   const course = courseByIdData?.course;
+
   useEffect(() => {
     if (course) {
       setInput({
@@ -51,32 +64,27 @@ const CourseTab = () => {
         category: course.category,
         courseLevel: course.courseLevel,
         coursePrice: course.coursePrice,
-        courseThumbnail: "",
+        courseThumbnail: null, // Prevent setting an invalid file reference
       });
     }
   }, [course]);
 
   const [previewThumbnail, setPreviewThumbnail] = useState("");
-  const navigate = useNavigate();
 
-  const [editCourse, { data, isLoading, isSuccess, error }] =
-    useEditCourseMutation();
-
+  // Input Change Handler
   const changeEventHandle = (e) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  const selectCategory = (value) => {
+  // Select Handlers
+  const selectCategory = (value) =>
     setInput((prev) => ({ ...prev, category: value }));
-  };
-
-  const selectCourseLevel = (value) => {
+  const selectCourseLevel = (value) =>
     setInput((prev) => ({ ...prev, courseLevel: value }));
-  };
 
-  // Get file
-  const SelectThumbnail = (e) => {
+  // File Selection Handler
+  const selectThumbnail = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       setInput((prev) => ({ ...prev, courseThumbnail: file }));
@@ -85,8 +93,12 @@ const CourseTab = () => {
       fileReader.readAsDataURL(file);
     }
   };
+
+  // Course Update Handler
   const updateCourseHandler = async () => {
     try {
+      if (!courseId) throw new Error("Course ID is missing");
+
       const formData = new FormData();
       formData.append("courseTitle", input.courseTitle);
       formData.append("subTitle", input.subTitle);
@@ -94,19 +106,32 @@ const CourseTab = () => {
       formData.append("category", input.category);
       formData.append("courseLevel", input.courseLevel);
       formData.append("coursePrice", input.coursePrice);
-      formData.append("courseThumbnail", input.courseThumbnail);
 
-      // Make sure courseId is available from URL params
-      if (courseId) {
-        await editCourse({ formData, courseId });
-      } else {
-        throw new Error("Course ID is missing");
+      if (input.courseThumbnail) {
+        formData.append("courseThumbnail", input.courseThumbnail);
       }
+
+      await editCourse({ formData, courseId });
     } catch (error) {
       toast.error("Something went wrong while updating the course");
-      console.error(error); // Log the error for debugging
+      console.error(error);
     }
   };
+
+  // Publish or Unpublish Handler
+  const publishStatusHandler = async (action) => {
+    try {
+      const response = await publishCourse({ courseId, query: action });
+      if (response?.data) {
+        refetch();
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to publish or unpublish course");
+    }
+  };
+
+  // Handle Toast Notifications
   useEffect(() => {
     if (isSuccess) {
       toast.success(data?.message || "Course updated successfully");
@@ -115,9 +140,8 @@ const CourseTab = () => {
       toast.error(error?.data?.message || "Failed to update course");
     }
   }, [isSuccess, error]);
-  if (courseByIdLoading)
-    return <Loader2 className="h-4 w-4 animate-spin"></Loader2>;
-  const isPublished = false;
+
+  if (courseByIdLoading) return <Loader2 className="h-4 w-4 animate-spin" />;
 
   return (
     <Card>
@@ -129,8 +153,16 @@ const CourseTab = () => {
           </CardDescription>
         </div>
         <div className="space-x-2">
-          <Button variant="outline">
-            {isPublished ? "Unpublish" : "Publish"}
+          <Button
+            disabled={courseByIdData?.course.lectures.length === 0}
+            variant="outline"
+            onClick={() =>
+              publishStatusHandler(
+                courseByIdData?.course.isPublished ? "false" : "true"
+              )
+            }
+          >
+            {courseByIdData?.course.isPublished ? "Unpublish" : "Publish"}
           </Button>
           <Button className="bg-black text-white">Remove Course</Button>
         </div>
@@ -202,26 +234,10 @@ const CourseTab = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>Price in (INR)</Label>
-              <Input
-                type="number"
-                name="coursePrice"
-                value={input.coursePrice}
-                onChange={changeEventHandle}
-                placeholder="₹199"
-                className="w-fit"
-              />
-            </div>
           </div>
           <div>
             <Label>Course Thumbnail</Label>
-            <Input
-              type="file"
-              onChange={SelectThumbnail}
-              accept="image/*"
-              className="w-fit"
-            />
+            <Input type="file" onChange={selectThumbnail} accept="image/*" />
             {previewThumbnail && (
               <img
                 src={previewThumbnail}
@@ -239,10 +255,7 @@ const CourseTab = () => {
               className="bg-black text-white"
             >
               {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-2 w-4 animate-spin" />
-                  Please wait
-                </>
+                <Loader2 className="mr-2 h-2 w-4 animate-spin" />
               ) : (
                 "Save"
               )}
