@@ -236,6 +236,19 @@ const CourseTab = () => {
             </div>
           </div>
           <div>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold">₹</span>
+              <Input
+                type="number"
+                name="coursePrice"
+                placeholder="Price"
+                value={input.coursePrice}
+                onChange={changeEventHandle}
+              />
+             
+            </div>
+          </div>
+          <div>
             <Label>Course Thumbnail</Label>
             <Input type="file" onChange={selectThumbnail} accept="image/*" />
             {previewThumbnail && (

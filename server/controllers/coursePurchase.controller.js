@@ -1,13 +1,8 @@
 import paypalClient from "../config/paypalClient.js";
 import { Course } from "../models/course.model.js";
 import { CoursePurchase } from "../models/coursePurchase.model.js";
-import { Lecture } from "../models/lecture.model.js";
-import { User } from "../models/user.model.js";
 import paypal from "@paypal/checkout-server-sdk";
 
-/**
- * Create PayPal Checkout Session
- */
 export const createCheckoutSession = async (req, res) => {
   try {
     const userId = req.id;
@@ -16,27 +11,38 @@ export const createCheckoutSession = async (req, res) => {
     const course = await Course.findById(courseId);
     if (!course) return res.status(404).json({ message: "Course not found!" });
 
-    // PayPal Order Creation
+    const coursePriceINR = course.coursePrice; // ✅ INR amount (No USD conversion)
+
+    // Convert INR to USD for PayPal processing
+    const conversionRate = 0.012; // Example rate (₹1 = $0.012)
+    const coursePriceUSD = (coursePriceINR * conversionRate).toFixed(2);
+
     const request = new paypal.orders.OrdersCreateRequest();
     request.requestBody({
       intent: "CAPTURE",
       purchase_units: [
         {
           amount: {
-            currency_code: "INR", // Indian Rupees
-            value: course.coursePrice.toFixed(2), // Convert to 2 decimal places
+            currency_code: "USD",
+            value: coursePriceUSD, // PayPal requires USD
+            breakdown: {
+              item_total: {
+                currency_code: "USD",
+                value: coursePriceUSD,
+              },
+            },
           },
-          description: course.courseTitle, // Course title as description
+          description: course.courseTitle,
           items: [
             {
-              name: course.courseTitle, // Course Name
+              name: course.courseTitle,
               unit_amount: {
-                currency_code: "INR",
-                value: course.coursePrice.toFixed(2),
+                currency_code: "USD",
+                value: coursePriceUSD,
               },
               quantity: 1,
               category: "DIGITAL_GOODS",
-              image_url: course.courseThumbnail, // Course Thumbnail
+              images: [course.courseThumbnail],
             },
           ],
         },
@@ -52,11 +58,11 @@ export const createCheckoutSession = async (req, res) => {
       return res.status(400).json({ message: "PayPal order creation failed" });
     }
 
-    // Save purchase record with PayPal order ID
+    // ✅ Save purchase record with only amountINR
     const newPurchase = new CoursePurchase({
       courseId,
       userId,
-      amount: course.coursePrice,
+      amountINR: coursePriceINR, // ✅ Store only INR
       status: "pending",
       paymentId: order.result.id,
     });
@@ -66,6 +72,7 @@ export const createCheckoutSession = async (req, res) => {
     return res.status(200).json({
       success: true,
       url: order.result.links.find((link) => link.rel === "approve").href,
+      amountINR: `₹${coursePriceINR}`, // ✅ Display INR price on frontend
     });
   } catch (error) {
     console.error(error);
@@ -92,7 +99,7 @@ export const paypalWebhook = async (req, res) => {
       purchase.status = "completed";
 
       // Make all lectures visible
-      if (purchase.courseId && purchase.courseId.lectures?.length>0) {
+      if (purchase.courseId && purchase.courseId.lectures?.length > 0) {
         await Lecture.updateMany(
           { _id: { $in: purchase.courseId.lectures } },
           { $set: { isPreviewFree: true } }
@@ -158,6 +165,10 @@ export const getAllPurchasedCourse = async (_, res) => {
     const purchasedCourses = await CoursePurchase.find({
       status: "completed",
     }).populate("courseId");
+
+    if (!purchasedCourses) {
+      return res.status(404).json({ purchasedCourses: [] });
+    }
 
     return res.status(200).json({
       purchasedCourses,

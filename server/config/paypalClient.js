@@ -1,4 +1,4 @@
-import paypal from "paypal/checkout-server-sdk";
+import paypal from "@paypal/checkout-server-sdk";
 
 const environment = new paypal.core.SandboxEnvironment(
   process.env.CLIENT_ID_KEY,

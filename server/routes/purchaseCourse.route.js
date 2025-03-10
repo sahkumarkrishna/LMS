@@ -1,5 +1,5 @@
 import express from "express";
-import isAuthenticated from "../middlewares/isAuthenticated.js";
+import isAuthenticated from "../Middleware/isAuthenticated.js";
 import {
   createCheckoutSession,
   getAllPurchasedCourse,
@@ -12,9 +12,11 @@ const router = express.Router();
 router
   .route("/checkout/create-checkout-session")
   .post(isAuthenticated, createCheckoutSession);
+
 router
-  .route("/paypal-webhook",paypalWebhook)
-  .post(express.raw({ type: "application/json" }), stripeWebhook);
+  .route("/paypal-webhook")
+  .post(express.raw({ type: "application/json" }), paypalWebhook); // ✅ Fixed
+
 router
   .route("/course/:courseId/details-with-status")
   .get(isAuthenticated, getCourseDetailWithPurchaseStatus);

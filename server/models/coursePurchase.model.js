@@ -11,7 +11,7 @@ const coursePurchaseSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    amount: {
+    amountINR: {
       type: Number,
       required: true,
     },

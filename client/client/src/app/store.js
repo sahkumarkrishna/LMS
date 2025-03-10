@@ -2,12 +2,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./rootReducer";
 import { authApi } from "@/Features/api/authApi";
 import { CourseApi } from "@/Features/api/courseApi";
+import { purchaseApi } from "@/Features/api/purchaseApi";
 
 // Configure the Redux store
 export const appStore = configureStore({
   reducer: rootReducer,
   middleware: (defaultMiddleware) =>
-    defaultMiddleware().concat(authApi.middleware, CourseApi.middleware),
+    defaultMiddleware().concat(
+      authApi.middleware,
+      CourseApi.middleware,
+      purchaseApi.middleware
+    ),
 });
 
 // Initialize the app by dispatching the loadUser endpoint
