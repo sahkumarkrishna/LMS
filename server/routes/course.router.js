@@ -18,7 +18,7 @@ import {
 import upload from "../utils/Multer.js";
 const router = express.Router();
 
-router.route("/published-courses").get(isAuthenticated, getPublishedCourse);
+router.route("/published-courses").get( getPublishedCourse);
 router.route("/").post(isAuthenticated, createCourse);
 
 router.route("/search").get(isAuthenticated, searchCourse);

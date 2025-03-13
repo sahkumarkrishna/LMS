@@ -3,183 +3,136 @@ import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
 import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
-// Register
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
-    // Validate input fields
+    const { name, email, password } = req.body; // patel214
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required.",deleteMediaFromCloudinary
+        message: "All fields are required.",
       });
     }
-
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
+    const user = await User.findOne({ email });
+    if (user) {
       return res.status(400).json({
         success: false,
-        message: "User already exists with this email.",
+        message: "User already exist with this email.",
       });
     }
-
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new user
-    const user = await User.create({
+    await User.create({
       name,
-      email: email.toLowerCase(),
+      email,
       password: hashedPassword,
     });
-
     return res.status(201).json({
       success: true,
       message: "Account created successfully.",
-      user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to register. Please try again later.",
+      message: "Failed to register",
     });
   }
 };
-
-// Login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Validate input fields
     if (!email || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required.",
       });
     }
-
-    // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect email or password.",
+        message: "Incorrect email or password",
       });
     }
-
-    // Compare passwords
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return res.status(400).json({
         success: false,
-        message: "Incorrect email or password.",
+        message: "Incorrect email or password",
       });
     }
-
-    // Generate a JWT token
     generateToken(res, user, `Welcome back ${user.name}`);
   } catch (error) {
-    console.error("Error during login:", error);
+    console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to login. Please try again later.",
+      message: "Failed to login",
     });
   }
 };
-
-// Logout
-export const logout = async (req, res) => {
+export const logout = async (_, res) => {
   try {
-    // Clear the token cookie by setting maxAge to 0
     return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      message: "Logout successful",
+      message: "Logged out successfully.",
       success: true,
     });
   } catch (error) {
-    console.error("Error during logout:", error);
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Failed to logout",
     });
   }
 };
-
-// Get User Profile
 export const getUserProfile = async (req, res) => {
   try {
-    const userId = req.id; // Assuming `req.id` is set via middleware
-    const user = await User.findById(userId).select("-password");
-
+    const userId = req.id;
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate("enrolledCourses");
     if (!user) {
       return res.status(404).json({
+        message: "Profile not found",
         success: false,
-        message: "Profile not found.",
       });
     }
-
     return res.status(200).json({
       success: true,
       user,
     });
   } catch (error) {
-    console.error("Error during fetching profile:", error);
+    console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch profile. Please try again later.",
+      message: "Failed to load user",
     });
   }
 };
-
-// Update User Profile
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.id; // Assuming `req.id` is set via middleware
+    const userId = req.id;
     const { name } = req.body;
-    const profilePhoto = req.file; // Assuming multer is used for file handling
+    const profilePhoto = req.file;
 
-    // Validate inputs
-    if (!name) {
-      return res.status(400).json({
-        success: false,
-        message: "Name is required.",
-      });
-    }
-
-    if (!profilePhoto) {
-      return res.status(400).json({
-        success: false,
-        message: "Profile photo is required.",
-      });
-    }
-
-    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
+        message: "User not found",
         success: false,
-        message: "User not found.",
       });
     }
-
-    // Delete old profile photo from Cloudinary (if it exists)
+    // extract public id of the old image from the url is it exists;
     if (user.photoUrl) {
-      const publicId = user.photoUrl.split("/").pop().split(".")[0];
-      await deleteMediaFromCloudinary(publicId);
+      const publicId = user.photoUrl.split("/").pop().split(".")[0]; // extract public id
+      deleteMediaFromCloudinary(publicId);
     }
 
-    // Upload the new profile photo to Cloudinary
+    // upload new photo
     const cloudResponse = await uploadMedia(profilePhoto.path);
     const photoUrl = cloudResponse.secure_url;
 
-    // Update user data
-    const updateData = { name, photoUrl };
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-      new: true, // Return the updated document
-      runValidators: true, // Run schema validators
+    const updatedData = { name, photoUrl };
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
     }).select("-password");
 
     return res.status(200).json({
@@ -188,10 +141,10 @@ export const updateProfile = async (req, res) => {
       message: "Profile updated successfully.",
     });
   } catch (error) {
-    console.error("Error during updating profile:", error);
+    console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to update profile. Please try again later.",
+      message: "Failed to update profile",
     });
   }
 };

@@ -1,8 +1,9 @@
+import { useLoadUserQuery } from "@/Features/api/authApi";
 import Course from "./Course";
 
 const MyLearning = () => {
-  const isLoading = false;
-  const myLearningCourses = []; // Example course data
+  const { data, isLoading } = useLoadUserQuery();
+  const MyLearning = data?.user?.enrolledCourse || [];
 
   return (
     <div className="max-w-4xl mx-auto my-24 px-4 md:px-0">
@@ -10,11 +11,11 @@ const MyLearning = () => {
       <div className="my-5">
         {isLoading ? (
           <MyLearningSkeleton />
-        ) : myLearningCourses.length === 0 ? (
+        ) : MyLearning.length === 0 ? ( // Corrected the condition
           <p>You are not enrolled in any courses.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[1, 2].map((course, index) => (
+            {MyLearning.map((course, index) => (
               <Course key={index} course={course} />
             ))}
           </div>
