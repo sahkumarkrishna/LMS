@@ -3,6 +3,7 @@ import rootReducer from "./rootReducer";
 import { authApi } from "@/Features/api/authApi";
 import { CourseApi } from "@/Features/api/courseApi";
 import { purchaseApi } from "@/Features/api/purchaseApi";
+import { courseProgressApi } from "@/Features/api/courseProgressApi";
 
 // Configure the Redux store
 export const appStore = configureStore({
@@ -11,7 +12,8 @@ export const appStore = configureStore({
     defaultMiddleware().concat(
       authApi.middleware,
       CourseApi.middleware,
-      purchaseApi.middleware
+      purchaseApi.middleware,
+      courseProgressApi.middleware
     ),
 });
 

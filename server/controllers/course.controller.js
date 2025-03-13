@@ -33,10 +33,10 @@ export const createCourse = async (req, res) => {
 
 export const getPublishedCourse = async (_, res) => {
   try {
-    const courses = await Course.find({ isPublished: true }).populate({
+    const courses = await Course.find({ isPublished: true }).populate([{
       path: "creator",
       select: "name photoUrl",
-    });
+    }])
 
     if (!courses || courses.length === 0) {
       return res.status(404).json({ message: "No published courses found" });
@@ -59,6 +59,48 @@ export const getCreatorCourses = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Failed to retrieve courses." });
+  }
+};
+
+// search
+export const searchCourse = async (req, res) => {
+  try {
+    const { query = "", categories = [], sortByPrice = "" } = req.query;
+    console.log(categories);
+
+    // create search query
+    const searchCriteria = {
+      isPublished: true,
+      $or: [
+        { courseTitle: { $regex: query, $options: "i" } },
+        { subTitle: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+      ],
+    };
+
+    // if categories selected
+    if (categories.length > 0) {
+      searchCriteria.category = { $in: categories };
+    }
+
+    // define sorting order
+    const sortOptions = {};
+    if (sortByPrice === "low") {
+      sortOptions.coursePrice = 1; //sort by price in ascending
+    } else if (sortByPrice === "high") {
+      sortOptions.coursePrice = -1; // descending
+    }
+
+    let courses = await Course.find(searchCriteria)
+      .populate({ path: "creator", select: "name photoUrl" })
+      .sort(sortOptions);
+
+    return res.status(200).json({
+      success: true,
+      courses: courses || [],
+    });
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -174,46 +216,41 @@ export const getCourseLecture = async (req, res) => {
   }
 };
 
-// 📌 EDIT LECTURE
 export const editLecture = async (req, res) => {
   try {
     const { lectureTitle, videoInfo, isPreviewFree } = req.body;
-    const { courseId, lectureId } = req.params;
 
+    const { courseId, lectureId } = req.params;
     const lecture = await Lecture.findById(lectureId);
     if (!lecture) {
-      return res.status(404).json({ message: "Lecture not found!" });
+      return res.status(404).json({
+        message: "Lecture not found!",
+      });
     }
 
-    if (!lecture.videoInfo) {
-      lecture.videoInfo = {};
-    }
-
-    if (videoInfo?.videoUrl) {
-      lecture.videoInfo.videoUrl = videoInfo.videoUrl;
-    } else if (!lecture.videoInfo.videoUrl) {
-      return res.status(400).json({ message: "Video URL is required." });
-    }
-
+    // update lecture
     if (lectureTitle) lecture.lectureTitle = lectureTitle;
-    if (videoInfo?.publicId) lecture.videoInfo.publicId = videoInfo.publicId;
-    if (typeof isPreviewFree === "boolean")
-      lecture.isPreviewFree = isPreviewFree;
+    if (videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
+    if (videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
+    lecture.isPreviewFree = isPreviewFree;
 
     await lecture.save();
 
+    // Ensure the course still has the lecture id if it was not aleardy added;
     const course = await Course.findById(courseId);
     if (course && !course.lectures.includes(lecture._id)) {
       course.lectures.push(lecture._id);
       await course.save();
     }
-
-    return res
-      .status(200)
-      .json({ lecture, message: "Lecture updated successfully." });
+    return res.status(200).json({
+      lecture,
+      message: "Lecture updated successfully.",
+    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Failed to edit lecture." });
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed to edit lectures",
+    });
   }
 };
 

@@ -203,14 +203,40 @@ const CourseTab = () => {
                 <SelectContent>
                   <SelectGroup className="bg-white">
                     <SelectLabel>Category</SelectLabel>
-                    <SelectItem value="Next js">Next js</SelectItem>
                     <SelectItem value="HTML">HTML</SelectItem>
                     <SelectItem value="CSS">CSS</SelectItem>
-                    <SelectItem value="Python">Python</SelectItem>
                     <SelectItem value="JavaScript">JavaScript</SelectItem>
-                    <SelectItem value="web-development">
+                    <SelectItem value="Java">Java</SelectItem>
+                    <SelectItem value="Python">Python</SelectItem>
+                    <SelectItem value="ReactJs">React Js</SelectItem>
+                    <SelectItem value="AngularJs">Angular Js</SelectItem>
+                    <SelectItem value="VueJs">Vue Js</SelectItem>
+                    <SelectItem value="NodeJs">Node Js</SelectItem>
+                    <SelectItem value="SpringBoot">Spring Boot</SelectItem>
+                    <SelectItem value="Django">Django</SelectItem>
+                    <SelectItem value="MongoDB">MongoDB</SelectItem>
+                    <SelectItem value="SQL">SQL</SelectItem>
+                    <SelectItem value="NextJs">Next Js</SelectItem>
+                    <SelectItem value="FrontendDevelopment">
+                      Frontend Development
+                    </SelectItem>
+                    <SelectItem value="BackendDevelopment">
+                      Backend Development
+                    </SelectItem>
+                    <SelectItem value="MERNStack">
+                      MERN Stack Development
+                    </SelectItem>
+                    <SelectItem value="MEANStack">
+                      MEAN Stack Development
+                    </SelectItem>
+                    <SelectItem value="FullstackDevelopment">
+                      Fullstack Development
+                    </SelectItem>
+                    <SelectItem value="WebDevelopment">
                       Web Development
                     </SelectItem>
+                    <SelectItem value="Docker">Docker</SelectItem>
+                    <SelectItem value="DataScience">Data Science</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -245,7 +271,6 @@ const CourseTab = () => {
                 value={input.coursePrice}
                 onChange={changeEventHandle}
               />
-             
             </div>
           </div>
           <div>

@@ -6,7 +6,7 @@ import {
   useGetCourseProgressQuery,
   useInCompleteCourseMutation,
   useUpdateLectureProgressMutation,
-} from "@/features/api/courseProgressApi";
+} from "@/Features/api/courseProgressApi";
 import { CheckCircle, CheckCircle2, CirclePlay } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 const CourseProgress = () => {
   const params = useParams();
-  const courseId = params.courseId;
+  const courseId = params.id;
   const { data, isLoading, isError, refetch } =
     useGetCourseProgressQuery(courseId);
 
@@ -79,7 +79,7 @@ const CourseProgress = () => {
   return (
     <div className="max-w-7xl mx-auto p-4">
       {/* Display course name  */}
-      <div className="flex justify-between mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 max-w-7xl mx-auto py-16 px-4 md:px-8 gap-4">
         <h1 className="text-2xl font-bold">{courseTitle}</h1>
         <Button
           onClick={completed ? handleInCompleteCourse : handleCompleteCourse}
@@ -87,7 +87,7 @@ const CourseProgress = () => {
         >
           {completed ? (
             <div className="flex items-center">
-              <CheckCircle className="h-4 w-4 mr-2" /> <span>Completed</span>{" "}
+              <CheckCircle className="h-4 w-4 mr-2" /> <span>Completed</span>
             </div>
           ) : (
             "Mark as completed"

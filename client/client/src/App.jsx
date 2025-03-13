@@ -13,6 +13,8 @@ import { EditCourse } from "./pages/admin/course/EditCourse";
 import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourseDetails from "./pages/students/CourseDetails";
+import CourseProgress from "./pages/students/CourseProgress";
+import SearchPage from "./pages/students/SearchPage";
 
 const appRouter = createBrowserRouter([
   {
@@ -28,7 +30,6 @@ const appRouter = createBrowserRouter([
           </>
         ),
       },
-
       {
         path: "login",
         element: <Login />, // Render Login for "/login"
@@ -42,10 +43,19 @@ const appRouter = createBrowserRouter([
         element: <Profile />,
       },
       {
+        path: "course/search",
+        element: <SearchPage />,
+      },
+      {
         path: "course-details/:courseId",
         element: <CourseDetails />,
       },
-      //admin router start from here
+      {
+        path: "CourseProgress/:id", // ✅ FIXED: Added missing route
+        element: <CourseProgress />,
+      },
+
+      // Admin routes
       {
         path: "admin",
         element: <Sidebar />,
@@ -62,7 +72,6 @@ const appRouter = createBrowserRouter([
             path: "course/create",
             element: <AddCourse />,
           },
-
           {
             path: "course/:courseId",
             element: <EditCourse />,

@@ -67,12 +67,12 @@
 //           <Card>
 //             <CardContent className="p-4 flex flex-col">
 //               <div className="w-full aspect-video mb-4">
-//                 {/* <ReactPlayer
+//                 <ReactPlayer
 //                   width="100%"
 //                   height={"100%"}
 //                   url={course.lectures[0].videoUrl}
 //                   controls={true}
-//                 /> */}
+//                 />
 //                 video aayega
 //               </div>
 //               <h1>Lecture title</h1>
@@ -96,8 +96,6 @@
 // };
 
 // export default CourseDetails;
-
-
 
 import { Button } from "@/components/ui/button";
 import BuyCourseButton from "@/components/ui/BuyCourseButton";
@@ -129,7 +127,7 @@ const CourseDetail = () => {
 
   const handleContinueCourse = () => {
     if (purchased) {
-      navigate(`/course-progress/${courseId}`);
+      navigate(`/CourseProgress/${courseId}`);
     }
   };
 
