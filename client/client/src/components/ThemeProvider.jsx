@@ -10,8 +10,11 @@ export const ThemeProvider = ({ children }) => {
     () => localStorage.getItem("theme") || "system"
   );
 
+  console.log("initial theme", theme);
+
   useEffect(() => {
     const root = document.documentElement;
+    console.log("root is",root)
     root.classList.remove("light", "dark");
 
     if (theme === "system") {

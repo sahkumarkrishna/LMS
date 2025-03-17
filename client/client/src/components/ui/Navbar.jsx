@@ -85,6 +85,9 @@ const Navbar = () => {
                     <DropdownMenuItem>
                       <Link to="/admin/dashboard">Dashboard</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link to="/admin/course">Course</Link>
+                    </DropdownMenuItem>
                   </>
                 )}
               </DropdownMenuContent>
@@ -94,7 +97,7 @@ const Navbar = () => {
               <Button variant="outline" onClick={() => navigate("/login")}>
                 Login
               </Button>
-              <Button onClick={() => navigate("/signup")}>Sign Up</Button>
+              <Button onClick={() => navigate("/login")}>Sign Up</Button>
             </div>
           )}
           <DarkMode />
@@ -104,7 +107,7 @@ const Navbar = () => {
       {/* Mobile Navbar */}
       <div className="flex md:hidden items-center justify-between px-4 h-full">
         <h1 className="font-extrabold text-2xl">E-Learning</h1>
-        <MobileNavbar user={user}/>
+        <MobileNavbar user={user} />
       </div>
     </div>
   );
@@ -144,13 +147,23 @@ export const  MobileNavbar = ({ user }) => {
         </nav>
         {user?.role === "instructor" && (
           <SheetFooter>
-            <SheetClose asChild>
-              <Button
-                type="button"
-                onClick={() => navigate("/admin/dashboard")}
-              >
-                Dashboard
-              </Button>
+          
+              <SheetClose asChild>
+                <>
+                  <Button
+                    type="button"
+                    onClick={() => navigate("/admin/dashboard")}
+                  >
+                    Dashboard
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => navigate("/admin/course")}
+                  >
+                    Course
+                  </Button>
+                </>
+          
             </SheetClose>
           </SheetFooter>
         )}

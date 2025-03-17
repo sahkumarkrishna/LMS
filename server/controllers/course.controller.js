@@ -174,6 +174,8 @@ export const getCourseById = async (req, res) => {
   }
 };
 
+// export const removeCourse
+
 // 📌 CREATE LECTURE
 export const createLecture = async (req, res) => {
   try {
