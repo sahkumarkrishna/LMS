@@ -80,7 +80,6 @@
 
 
 
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { userLoggedIn, userLoggedOut } from "../authSlice";
 
@@ -93,6 +92,10 @@ export const authApi = createApi({
     credentials: "include",
     prepareHeaders: (headers) => {
       headers.set("Accept", "application/json");
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
       return headers;
     },
   }),
@@ -121,6 +124,22 @@ export const authApi = createApi({
       },
     }),
 
+    googleUser: builder.mutation({
+      query: (inputData) => ({
+        url: "google-login", // Ensure this matches your backend endpoint
+        method: "POST",
+        body: inputData,
+      }),
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(userLoggedIn({ user: data.user }));
+        } catch (error) {
+          console.error("Google login error:", error);
+        }
+      },
+    }),
+
     logoutUser: builder.mutation({
       query: () => ({
         url: "logout",
@@ -140,9 +159,6 @@ export const authApi = createApi({
       query: () => ({
         url: "profile",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
       }),
       async onQueryStarted(_, { queryFulfilled, dispatch }) {
         try {
@@ -196,6 +212,7 @@ export const authApi = createApi({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+useGoogleUserMutation,
   useLogoutUserMutation,
   useLoadUserQuery,
   useUploadUserMutation,
@@ -203,4 +220,3 @@ export const {
   useSendForgotPasswordCodeUserMutation,
   useVerifyForgotPasswordCodeUserMutation,
 } = authApi;
-

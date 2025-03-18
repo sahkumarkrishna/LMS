@@ -249,6 +249,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import GoogleLogin from "./students/GoogleLogin";
 
 const Login = () => {
   const [SignInput, setSignInput] = useState({
@@ -386,6 +387,15 @@ const Login = () => {
                 )}
               </Button>
             </CardFooter>
+            <div className="flex flex-col items-center">
+              <div className="relative flex items-center my-3 w-full">
+                <hr className="w-full border-2" />
+                <span className="absolute left-1/2 transform -translate-x-1/2 bg-white px-2 text-sm">
+                  Or
+                </span>
+              </div>
+              <GoogleLogin />
+            </div>
           </Card>
         </TabsContent>
 
@@ -427,6 +437,7 @@ const Login = () => {
                 </Link>
               </div>
             </CardContent>
+
             <CardFooter>
               <Button
                 className="bg-black text-white"
@@ -440,6 +451,15 @@ const Login = () => {
                 )}
               </Button>
             </CardFooter>
+            <div className="flex flex-col items-center">
+              <div className="relative flex items-center my-3 w-full">
+                <hr className="w-full border-2" />
+                <span className="absolute left-1/2 transform -translate-x-1/2 bg-white px-2 text-sm">
+                  Or
+                </span>
+              </div>
+              <GoogleLogin />
+            </div>
           </Card>
         </TabsContent>
       </Tabs>

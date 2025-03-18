@@ -40,7 +40,7 @@ const Course = ({ course }) => {
             <span className="text-lg font-bold">
               ₹{Number(course?.coursePrice) || 0}
             </span>
-            <Button className="bg-gray--600 hover:bg-gray-700 text-white px-4 py-1 text-sm rounded-md">
+            <Button className="bg-gray-600 text-white px-4 py-1 text-sm rounded-md">
               Buy Now
             </Button>
           </div>

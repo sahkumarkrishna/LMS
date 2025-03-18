@@ -1,37 +1,57 @@
+import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./components/ui/dropdown-menu";
-import { Button } from "./components/ui/button";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "./components/ThemeProvider";
+} from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/components/ui/ThemeProvider"; // Correct import
 
 const DarkMode = () => {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme(); // ✅ Added theme state for better handling
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+        <Button variant="outline" size="icon" aria-label="Toggle theme">
+          {/* Sun (Light Mode) */}
+          <Sun
+            className={`h-[1.2rem] w-[1.2rem] transition-transform duration-300 ${
+              theme === "dark" ? "-rotate-90 scale-0" : "rotate-0 scale-100"
+            }`}
+          />
+          {/* Moon (Dark Mode) */}
+          <Moon
+            className={`absolute h-[1.2rem] w-[1.2rem] transition-transform duration-300 ${
+              theme === "dark" ? "rotate-0 scale-100" : "rotate-90 scale-0"
+            }`}
+          />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+      <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuItem
+          onClick={() => setTheme("light")}
+          aria-label="Light Mode"
+        >
+          🌞 Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
+        <DropdownMenuItem
+          onClick={() => setTheme("dark")}
+          aria-label="Dark Mode"
+        >
+          🌙 Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+        <DropdownMenuItem
+          onClick={() => setTheme("system")}
+          aria-label="System Mode"
+        >
+          🖥️ System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}
+
 
 export default DarkMode;

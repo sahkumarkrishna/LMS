@@ -21,11 +21,12 @@ import {
 } from "./components/ui/ProtectedRoutes";
 import CoursesTable from "./pages/admin/course/CorsesTable";
 import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
-import { ThemeProvider } from "./components/ThemeProvider";
+
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyForgotPasswordCode from "./pages/VerifyForgotPasswordCode";
 import NewPassword from "./pages/NewPassword";
 import NotFound from "./NotFound";
+import { ThemeProvider } from "./components/ui/ThemeProvider";
 
 const appRouter = createBrowserRouter([
   {

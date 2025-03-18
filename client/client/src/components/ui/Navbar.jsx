@@ -1,5 +1,5 @@
 import { Menu, School } from "lucide-react";
-import { Button } from "./button";
+
 import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -26,6 +26,7 @@ import { useLogoutUserMutation } from "@/Features/api/authApi";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
+import { Button } from "./button";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -115,7 +116,7 @@ const Navbar = () => {
 
 export default Navbar;
 
-export const  MobileNavbar = ({ user }) => {
+export const MobileNavbar = ({ user }) => {
   const [logoutUser] = useLogoutUserMutation();
   const navigate = useNavigate();
 
@@ -147,23 +148,18 @@ export const  MobileNavbar = ({ user }) => {
         </nav>
         {user?.role === "instructor" && (
           <SheetFooter>
-          
-              <SheetClose asChild>
-                <>
-                  <Button
-                    type="button"
-                    onClick={() => navigate("/admin/dashboard")}
-                  >
-                    Dashboard
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => navigate("/admin/course")}
-                  >
-                    Course
-                  </Button>
-                </>
-          
+            <SheetClose asChild>
+              <>
+                <Button
+                  type="button"
+                  onClick={() => navigate("/admin/dashboard")}
+                >
+                  Dashboard
+                </Button>
+                <Button type="button" onClick={() => navigate("/admin/course")}>
+                  Course
+                </Button>
+              </>
             </SheetClose>
           </SheetFooter>
         )}
@@ -171,5 +167,3 @@ export const  MobileNavbar = ({ user }) => {
     </Sheet>
   );
 };
-
-

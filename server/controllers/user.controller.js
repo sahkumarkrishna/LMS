@@ -1,18 +1,183 @@
 
+// import bcrypt from "bcryptjs";
+// import { User } from "../models/user.model.js";
+// import { generateToken } from "../utils/generateToken.js";
+// import transport from "../Middleware/sendMail.js";
+// import { signupSchema } from "../Middleware/validator.js";
+
+// import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
+
+
+//  // ✅ Register Function
+// export const register = async (req, res) => {
+
+
+//  // Validate input
+//   const { error } = signupSchema.validate(req.body);
+//   if (error) return sendResponse(res, 400, false, error.details[0].message);
+
+//   const { name, email, password } = req.body;
+
+//   try {
+//     // Check if user already exists
+//     let user = await User.findOne({ email });
+//     if (user) return sendResponse(res, 400, false, "Email already exists!");
+
+//     // Ensure password is provided before hashing
+//     if (!password) {
+//       return sendResponse(res, 400, false, "Password is required.");
+//     }
+
+//     // Hash the password before storing
+//     const hashedPassword = await bcrypt.hash(password, 12);
+//     console.log("Hashed password:", hashedPassword); // Debugging
+
+//     // Create new user
+//     user = new User({
+//       name,
+//       email,
+//       password: hashedPassword, // Ensure password is stored
+//       isVerified: false,
+//     });
+
+//     await user.save();
+//     console.log("New user created:", user); // Debugging
+
+//     // ✅ Send Email (Only Success Message)
+//     await transport.sendMail({
+//       from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+//       to: email,
+//       subject: "Welcome to Our Platform!",
+//       text: "Registration successful!",
+//     });
+
+//     return sendResponse(
+//       res,
+//       200,
+//       true,
+//       "Registration successful!"
+//     );
+//   } catch (err) {
+//     console.error("Registration Error:", err);
+//     return sendResponse(res, 500, false, "Server error. Please try again.");
+//   }
+
+// }
+
+// export const login = async (req, res) => {
+//   try {
+ 
+
+//     const { email, password } = req.body;
+
+//     if (!email || !password) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "All fields are required.",
+//       });
+//     }
+
+//     const user = await User.findOne({ email }).select("+password");
+
+//     console.log("User found:", user); // Debugging
+
+//     if (!user) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Incorrect email or password",
+//       });
+//     }
+
+//     if (!user.password) {
+//       console.error("Error: User password is undefined in DB.");
+//       return res.status(500).json({
+//         success: false,
+//         message: "Server error. Please try again.",
+//       });
+//     }
+
+//     const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+//     if (!isPasswordMatch) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Incorrect email or password",
+//       });
+//     }
+
+//     // ✅ Generate token and send response
+//     return generateToken(res, user, `Welcome back ${user.name}`);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to login",
+//     });
+//   }
+// };
+
+// export const GoogleLogin = async (req, res, next) => {
+//   try {
+//     const { name, email, avatar } = req.body;
+
+//     let user = await User.findOne({ email });
+
+//     if (!user) {
+//       const randomPassword = Math.random().toString(36).slice(-8);
+//       const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+//       user = new User({
+//         name,
+//         email,
+//         avatar,
+//         password: hashedPassword,
+//       });
+
+//       await user.save();
+//     }
+
+//     const token = jwt.sign(
+//       {
+//         _id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         avatar: user.avatar,
+//       },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Google login successful",
+//       token,
+//       user: {
+//         _id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         avatar: user.avatar,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Google Login Error:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error. Please try again.",
+//     });
+//   }
+// };
+
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"; // ✅ Missing import added
 import { User } from "../models/user.model.js";
 import { generateToken } from "../utils/generateToken.js";
 import transport from "../Middleware/sendMail.js";
 import { signupSchema } from "../Middleware/validator.js";
-
 import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
-
- // ✅ Register Function
+// ✅ Register Function
 export const register = async (req, res) => {
-
-
- // Validate input
+  // Validate input
   const { error } = signupSchema.validate(req.body);
   if (error) return sendResponse(res, 400, false, error.details[0].message);
 
@@ -51,23 +216,16 @@ export const register = async (req, res) => {
       text: "Registration successful!",
     });
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Registration successful!"
-    );
+    return sendResponse(res, 200, true, "Registration successful!");
   } catch (err) {
     console.error("Registration Error:", err);
     return sendResponse(res, 500, false, "Server error. Please try again.");
   }
+};
 
-}
-
+// ✅ Login Function
 export const login = async (req, res) => {
   try {
- 
-
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -116,7 +274,44 @@ export const login = async (req, res) => {
   }
 };
 
+export const GoogleLogin = async (req, res) => {
+  try {
+    const { name, email, avatar } = req.body;
 
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required." });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Generate a random password since Google login does not provide one
+      const randomPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+      user = new User({
+        name,
+        email,
+        avatar: avatar || "", // Default empty string if no avatar
+        password: hashedPassword,
+      });
+
+      await user.save();
+    }
+
+    // ✅ Generate Token (Using Utility Function)
+    generateToken(res, user, "Google login successful");
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error. Try again." });
+  }
+};
+
+  
 
 
 /** 🚪 LOGOUT */
@@ -266,36 +461,48 @@ export const setNewPassword = async (req, res) => {
 };
 
 
-
-
-/** **UPDATE PROFILE** */
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // Ensure authentication middleware sets req.user.id
+    const userId = req.id;
     const { name } = req.body;
     const profilePhoto = req.file;
 
     const user = await User.findById(userId);
-    if (!user) return sendResponse(res, 404, false, "User not found!");
-
-    if (profilePhoto) {
-      if (user.photoUrl) {
-        const publicId = user.photoUrl.split("/").pop().split(".")[0];
-        await deleteMediaFromCloudinary(publicId);
-      }
-      const cloudResponse = await uploadMedia(profilePhoto.path);
-      user.photoUrl = cloudResponse.secure_url;
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+    // extract public id of the old image from the url is it exists;
+    if (user.photoUrl) {
+      const publicId = user.photoUrl.split("/").pop().split(".")[0]; // extract public id
+      deleteMediaFromCloudinary(publicId);
     }
 
-    user.name = name || user.name;
-    await user.save();
+    // upload new photo
+    const cloudResponse = await uploadMedia(profilePhoto.path);
+    const photoUrl = cloudResponse.secure_url;
 
-    return sendResponse(res, 200, true, "Profile updated successfully!");
+    const updatedData = { name, photoUrl };
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    }).select("-password");
+
+    return res.status(200).json({
+      success: true,
+      user: updatedUser,
+      message: "Profile updated successfully.",
+    });
   } catch (error) {
-    console.error("Profile Update Error:", error);
-    return sendResponse(res, 500, false, "Failed to update profile.");
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update profile",
+    });
   }
 };
+
 export const getUserProfile = async (req, res) => {
   try {
     const userId = req.id; // Extract user ID from authentication middleware
