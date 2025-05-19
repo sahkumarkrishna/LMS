@@ -5,6 +5,9 @@ import { CourseApi } from "@/Features/api/courseApi";
 import { purchaseApi } from "@/Features/api/purchaseApi";
 import { courseProgressApi } from "@/Features/api/courseProgressApi";
 
+
+
+
 // Configure the Redux store
 export const appStore = configureStore({
   reducer: rootReducer,

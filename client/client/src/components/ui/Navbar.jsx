@@ -1,5 +1,6 @@
-import { Menu, School } from "lucide-react";
 
+
+import { Menu, School } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -10,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import DarkMode from "@/DarkMode";
+
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import {
   Sheet,
@@ -101,7 +102,7 @@ const Navbar = () => {
               <Button onClick={() => navigate("/login")}>Sign Up</Button>
             </div>
           )}
-          <DarkMode />
+        
         </div>
       </div>
 
@@ -136,7 +137,7 @@ export const MobileNavbar = ({ user }) => {
           <SheetTitle>
             <Link to="/">E-Learning</Link>
           </SheetTitle>
-          <DarkMode />
+       
         </SheetHeader>
         <Separator className="mr-2" />
         <nav className="flex flex-col space-y-4">
@@ -146,10 +147,11 @@ export const MobileNavbar = ({ user }) => {
             Log Out
           </button>
         </nav>
+
         {user?.role === "instructor" && (
           <SheetFooter>
             <SheetClose asChild>
-              <>
+              <div className="flex flex-col gap-2">
                 <Button
                   type="button"
                   onClick={() => navigate("/admin/dashboard")}
@@ -159,7 +161,7 @@ export const MobileNavbar = ({ user }) => {
                 <Button type="button" onClick={() => navigate("/admin/course")}>
                   Course
                 </Button>
-              </>
+              </div>
             </SheetClose>
           </SheetFooter>
         )}

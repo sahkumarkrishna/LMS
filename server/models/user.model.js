@@ -23,20 +23,7 @@ const userSchema = new mongoose.Schema(
       select: false, // Don't include password in responses by default
     },
 
-    verificationCode: {
-      type: String,
-      select: false, // Don't expose verification code by default
-    },
-
-    forgotPasswordCode: {
-      type: String,
-      select: false, // Ensure it is not excluded from queries
-    },
-    forgotPasswordCodeValidation: {
-      type: Date,
-      select: false,
-    },
-
+    
     role: {
       type: String,
       enum: ["instructor", "student"], // Allowed roles

@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+
 const Profile = () => {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");

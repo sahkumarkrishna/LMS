@@ -5,13 +5,20 @@ import { CourseApi } from "@/Features/api/courseApi";
 import { purchaseApi } from "@/Features/api/purchaseApi";
 import { courseProgressApi } from "@/Features/api/courseProgressApi";
 
+
+
+
+
 const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
-  [CourseApi.reducerPath]: CourseApi.reducer, // Fixed syntax error here
-  [purchaseApi.reducerPath]:purchaseApi.reducer,
-  [courseProgressApi.reducerPath]:courseProgressApi.reducer,
   
+  [CourseApi.reducerPath]: CourseApi.reducer,
+  [purchaseApi.reducerPath]: purchaseApi.reducer,
+  [courseProgressApi.reducerPath]: courseProgressApi.reducer,
+
   auth: authReducer,
+
+
 });
 
 export default rootReducer;

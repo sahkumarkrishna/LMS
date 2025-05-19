@@ -20,13 +20,10 @@ import {
   ProtectedRoute,
 } from "./components/ui/ProtectedRoutes";
 import CoursesTable from "./pages/admin/course/CorsesTable";
-import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
+// import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 
-import ForgotPassword from "./pages/ForgotPassword";
-import VerifyForgotPasswordCode from "./pages/VerifyForgotPasswordCode";
-import NewPassword from "./pages/NewPassword";
 import NotFound from "./NotFound";
-import { ThemeProvider } from "./components/ui/ThemeProvider";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const appRouter = createBrowserRouter([
   {
@@ -42,10 +39,7 @@ const appRouter = createBrowserRouter([
           </>
         ),
       },
-      {
-        path: "*", // Catch-all route
-        element: <NotFound />,
-      },
+
       {
         path: "login",
         element: (
@@ -54,31 +48,7 @@ const appRouter = createBrowserRouter([
           </AuthenticatedUser>
         ),
       },
-      {
-        path: "/forgot-password",
-        element: (
-          <AuthenticatedUser>
-            <ForgotPassword />
-          </AuthenticatedUser>
-        ),
-      },
-      {
-        path: "/verify-forgot-password-code",
-        element: (
-          <AuthenticatedUser>
-            <VerifyForgotPasswordCode />
-          </AuthenticatedUser>
-        ),
-      },
 
-      {
-        path: "/new-password",
-        element: (
-          <AuthenticatedUser>
-            <NewPassword />
-          </AuthenticatedUser>
-        ),
-      },
       {
         path: "my-learning",
         element: (
@@ -115,9 +85,9 @@ const appRouter = createBrowserRouter([
         path: "CourseProgress/:id",
         element: (
           <ProtectedRoute>
-            <PurchaseCourseProtectedRoute>
-              <CourseProgress />
-            </PurchaseCourseProtectedRoute>
+            {/* <PurchaseCourseProtectedRoute> */}
+            <CourseProgress />
+            {/*  </PurchaseCourseProtectedRoute> */}
           </ProtectedRoute>
         ),
       },
@@ -158,6 +128,10 @@ const appRouter = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "*", // Catch-all route
+    element: <NotFound />,
   },
 ]);
 

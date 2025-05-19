@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/components/ui/ThemeProvider"; // Correct import
+import { useTheme } from "@/components/ThemeProvider"; // Correct import
 
 const DarkMode = () => {
   const { theme, setTheme } = useTheme(); // ✅ Added theme state for better handling
@@ -51,7 +51,6 @@ const DarkMode = () => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
+};
 
 export default DarkMode;
